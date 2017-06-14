@@ -23,6 +23,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String REQUEST_TAG = "request_tag";
 
-    private static final String GET_URL = "https://www.baidu.com";
+    private static final String GET_URL = "https://api.github.com/users/";
     private static final String POST_URL = "http://www.baidu.com";
     private static final String NORMAL_IMAGE_URL = "https://image1.guazistatic.com/qn1706021141581b9526b6f78283b3bcc8aafd14fade1d.jpg";
     private static final String VOLLEY_IMAGE_URL = "https://image1.guazistatic.com/qn170602115500fe8a90dabfba5f08b88adcbe7e899b12.jpg";
@@ -86,8 +88,15 @@ public class MainActivity extends AppCompatActivity {
 
             if (Objects.equals(mBtnGet, view)) {
 
+                StringBuilder builder = new StringBuilder();
+                try {
+                    builder.append(GET_URL).append(URLEncoder.encode("haoxunwang", "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
                 // Normal Get Request
-                StringRequest getRequest = new StringRequest(GET_URL, new Response.Listener<String>() {
+                StringRequest getRequest = new StringRequest(builder.toString(), new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         mTvTxt.setText(response);
@@ -97,7 +106,14 @@ public class MainActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         mTvTxt.setText(error.getMessage());
                     }
-                });
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("Content-Type", "application/json");
+                        return headers;
+                    }
+                };
 
                 getRequest.setTag(REQUEST_TAG);
                 mRequestQueue.add(getRequest);
