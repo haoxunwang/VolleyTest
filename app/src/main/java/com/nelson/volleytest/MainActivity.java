@@ -6,6 +6,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.Button;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mBtnGet;
     private Button mBtnPost;
     private Button mBtnGetImg;
+    private Button mBtnCancel;
     private ImageView mIvImg;
     private TextView mTvTxt;
     private NetworkImageView mNetImg;
@@ -58,10 +60,12 @@ public class MainActivity extends AppCompatActivity {
         mBtnGet = getViewById(R.id.btn_get);
         mBtnPost = getViewById(R.id.btn_post);
         mBtnGetImg = getViewById(R.id.btn_get_img);
+        mBtnCancel = getViewById(R.id.btn_cancel);
 
         mBtnGet.setOnClickListener(mOnclickListener);
         mBtnPost.setOnClickListener(mOnclickListener);
         mBtnGetImg.setOnClickListener(mOnclickListener);
+        mBtnCancel.setOnClickListener(mOnclickListener);
 
         initVolley();
 
@@ -117,6 +121,12 @@ public class MainActivity extends AppCompatActivity {
 
                 getRequest.setTag(REQUEST_TAG);
                 mRequestQueue.add(getRequest);
+                mRequestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<String>() {
+                    @Override
+                    public void onRequestFinished(Request<String> request) {
+                        Log.e("test", request.getUrl());
+                    }
+                });
 
             } else if (Objects.equals(mBtnPost, view)) {
 
@@ -143,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
 
                 postRequest.setTag(REQUEST_TAG);
                 mRequestQueue.add(postRequest);
+                mRequestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<Bitmap>() {
+                    @Override
+                    public void onRequestFinished(Request<Bitmap> request) {
+                        Log.e("test", request.getUrl());
+                    }
+                });
 
 
             } else if (Objects.equals(mBtnGetImg, view)) {
@@ -163,6 +179,12 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 mRequestQueue.add(imageRequest);
+                mRequestQueue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<Bitmap>() {
+                    @Override
+                    public void onRequestFinished(Request<Bitmap> request) {
+                        Log.e("test", request.getUrl());
+                    }
+                });
 
                 //                // Two way
                 //                ImageLoader imageLoader = new ImageLoader(mRequestQueue, new BitmapCache());
@@ -176,6 +198,8 @@ public class MainActivity extends AppCompatActivity {
                 //                mNetImg.setErrorImageResId(R.mipmap.ic_launcher);
                 //                mNetImg.setImageUrl(VOLLEY_IMAGE_URL, imageLoader);
 
+            } else if (Objects.equals(view, mBtnCancel)) {
+                mRequestQueue.cancelAll(REQUEST_TAG);
             }
         }
     };

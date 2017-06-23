@@ -47,4 +47,11 @@
         android:layout_height="wrap_content"
         tools:text="测试返回数据"/>
 
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="cancel_all_request"
+        android:textAllCaps="false"/>
+
 </LinearLayout>
