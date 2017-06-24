@@ -2,10 +2,10 @@ package com.nelson.volleytest;
 
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
@@ -23,6 +23,8 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -142,13 +144,34 @@ public class MainActivity extends AppCompatActivity {
                         mTvTxt.setText(error.getMessage());
                     }
                 }) {
+                    // 自定义post请求参数格式 application/json
                     @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String, String> map = new HashMap<>();
-                        map.put("params1", "value1");
-                        map.put("params2", "value2");
-                        return map;
+                    public String getBodyContentType() {
+                        return "application/json";
                     }
+
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("key1", "value1");
+                            jsonObject.put("key2", "value2");
+                            return jsonObject.toString().getBytes(getParamsEncoding());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+
+
+                    // 使用Volley默认的post请求参数格式, 原生浏览器表单格式：application/x-www-form-urlencoded
+                    //@Override
+                    //protected Map<String, String> getParams() throws AuthFailureError {
+                    //    Map<String, String> map = new HashMap<>();
+                    //    map.put("params1", "value1");
+                    //    map.put("params2", "value2");
+                    //    return map;
+                    //}
                 };
 
                 postRequest.setTag(REQUEST_TAG);
